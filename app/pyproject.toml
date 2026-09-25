@@ -1,0 +1,10 @@
+[project]
+name = "raices"
+version = "0.1.0"
+description = "PySide6 application for modeling, visualizing, and exporting family trees"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "colorlog>=6.10.1,<6.11",
+    "pydantic>=2.9,<3",
+    "pyside6-essentials>=6.11.1,<6.12",
+]

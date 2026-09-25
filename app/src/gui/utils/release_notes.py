@@ -1,0 +1,32 @@
+"""Render release-history entries as HTML for display in the GUI."""
+
+import html
+from datetime import UTC, datetime
+
+from src.core.releases import ReleaseEntry
+
+# --------------------------------------------------------------------------------------------------
+# HTML rendering
+# --------------------------------------------------------------------------------------------------
+def format_release_entries_html(releases: list[ReleaseEntry]) -> str:
+    """Format release entries as a small HTML document."""
+    if not releases:
+        return "<!doctype html><html><body><p>No release notes available.</p></body></html>"
+    parts = ["<!doctype html>", "<html>", "<body>"]
+    for release in reversed(releases):
+        version = html.escape(release.version)
+        created_at_local = html.escape(_format_release_datetime_local(release.created_at_utc))
+        parts.append(f"<h2>Version {version}</h2>")
+        parts.append(f"<p><code>{created_at_local}</code></p>")
+        if release.changes:
+            parts.append("<ul>")
+            parts.extend(f"<li>{html.escape(change)}</li>" for change in release.changes)
+            parts.append("</ul>")
+        else:
+            parts.append("<p>No changes listed.</p>")
+    parts.extend(["</body>", "</html>"])
+    return "\n".join(parts)
+# --------------------------------------------------------------------------------------------------
+def _format_release_datetime_local(value: datetime) -> str:
+    release_datetime = value if value.tzinfo is not None else value.replace(tzinfo=UTC)
+    return release_datetime.astimezone().strftime("%Y-%m-%d %H:%M:%S %Z")
